@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://unpkg.com/vue@next"></script>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div id="app" style="text-align: center;">
+            <p><button v-if = "button1_show" @click="click1()">{{ button1_message }}</button></p>
+            <p><button v-if = "button2_show" @click="click2()" v-bind:class="{ disguised: button2_disguised }">{{ button2_message }}</button></p>
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>
