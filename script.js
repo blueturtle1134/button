@@ -1,10 +1,3 @@
-count1 = 0;
-count2 = 0;
-dontclick_found = false;
-loop_started = false;
-loop_finished = false;
-start = new Date();
-
 function timeSinceStart() {
     now = new Date();
     return now.getTime() - start.getTime();
@@ -36,6 +29,13 @@ disguisedComplaints = [
 Vue.createApp({
     data() {
         return {
+            count1: 0,
+            count2: 0,
+            dontclick_found: false,
+            loop_started: false,
+            loop_finished: false,
+            found_nothing_here: false,
+            start: new Date(),
             button1_show: true,
             button1_message: "Click me!",
             button2_show: false,
@@ -44,16 +44,16 @@ Vue.createApp({
         }
     },
     methods: {
-        click1() {
-            count1++;
-            if(dontclick_found) {
-                if (loop_started){
-                    if (loop_finished) {
+        click1(e) {
+            this.count1++;
+            if(this.dontclick_found) {
+                if (this.loop_started){
+                    if (this.loop_finished) {
                         // TODO: more
                     }
                     else {
-                        this.button1_message = complaints[(count1 % complaints.length)];
-                        if (count1 >= 30) {
+                        this.button1_message = complaints[(this.count1 % complaints.length)];
+                        if (this.count1 >= 30) {
                             this.button2_show = true;
                             this.button2_message = "Okay, this is a loop now.";
                         }
@@ -61,35 +61,52 @@ Vue.createApp({
                 }
                 else {
                     this.button1_message = "Shoot, you found me.";
-                    loop_started = true;
+                    this.loop_started = true;
                 }
             }
-            else if(count1 >= 4*5*60 && timeSinceStart() >= 5*1000*60 && count2 == 0) {
+            else if(this.count1 >= 4*5*60 && timeSinceStart() >= 5*1000*60 && this.count2 == 0) {
                 complaints = non_complaints;
                 this.button2_message = complaints[0];
             }
-            else if(count1 >= 20 && count2 >= complaints.length + disguisedComplaints.length && !dontclick_found) {
+            else if(this.count1 >= 20 && this.count2 >= complaints.length + disguisedComplaints.length && !this.dontclick_found) {
                 this.button1_message = "Don't click me.";
-                dontclick_found = true;
+                this.dontclick_found = true;
             }
-            else if(count1 == 3) {
+            else if(this.count1 == 3) {
                 this.button2_show = true;
             }
         },
-        click2() {
-            count2++;
-            if(dontclick_found){
-                // TODO: more
+        click2(e) {
+            this.count2++;
+            if(this.loop_started){
+                if (this.count1 % 10 == 0) {
+                    if (this.found_nothing_here) {
+                        this.button2_message = "Huh, guess there is something here."
+                        this.found_nothing_here = false;
+                    }
+                    else {
+
+                    }
+                }
+                else {
+                    if (this.found_nothing_here) {
+                        this.button2_message = "Still nothing here."
+                    }
+                    else {
+                        this.button2_message = "Nope, nothing here."
+                        this.found_nothing_here = true;
+                    }
+                }
             }
-            else if (count2 >= complaints.length + disguisedComplaints.length) {
+            else if (this.count2 >= complaints.length + disguisedComplaints.length) {
                 this.button2_show = false;
             }
-            else if (count2 >= complaints.length) {
+            else if (this.count2 >= complaints.length) {
                 this.button2_disguised = true;
-                this.button2_message = disguisedComplaints[count2 - complaints.length];
+                this.button2_message = disguisedComplaints[this.count2 - complaints.length];
             }
             else {
-                this.button2_message = complaints[count2];
+                this.button2_message = complaints[this.count2];
             }
         }
     }
