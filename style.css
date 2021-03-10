@@ -3,3 +3,7 @@ button.disguised {
     border-style: none;
     background: none;
 }
+
+table, td {
+    border: 1px solid black
+}

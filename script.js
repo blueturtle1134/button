@@ -3,13 +3,15 @@ function timeSinceStart() {
     return now.getTime() - start.getTime();
 }
 
+const STOP_MESSAGE = "Stop it!"
+
 complaints = [
     "Don't click me.",
     "I said don't click me.",
     "I told you, don't click me.",
     "I mean it.",
     "Stop clicking me.",
-    "Stop it!",
+    STOP_MESSAGE,
     "I'm warning you."
 ];
 non_complaints = [
@@ -26,7 +28,17 @@ disguisedComplaints = [
     "I'm leaving now."
 ];
 
-Vue.createApp({
+function jump_button() {
+    var num = 0;
+    do {
+        num = Math.trunc(Math.random()*9);
+    }
+    while (app.table1_showbuttons[num])
+    app.table1_showbuttons.fill(false);
+    app.table1_showbuttons[num] = true;
+}
+
+app = Vue.createApp({
     data() {
         return {
             count1: 0,
@@ -40,16 +52,23 @@ Vue.createApp({
             button1_message: "Click me!",
             button2_show: false,
             button2_message: "Don't click me.",
-            button2_disguised: false
+            button2_disguised: false,
+            table1_show: false,
+            table1_showbuttons: new Array(9).fill(false),
+            table1_messages: new Array(9).fill("Click me!"),
+            interval_id: null,
+            count3: 0
         }
     },
     methods: {
-        click1(e) {
+        click1() {
             this.count1++;
             if(this.dontclick_found) {
                 if (this.loop_started){
                     if (this.loop_finished) {
-                        // TODO: more
+                        if (this.button1_message == STOP_MESSAGE) {
+                            clearInterval(this.interval_id);
+                        }
                     }
                     else {
                         this.button1_message = complaints[(this.count1 % complaints.length)];
@@ -76,16 +95,20 @@ Vue.createApp({
                 this.button2_show = true;
             }
         },
-        click2(e) {
+        click2() {
             this.count2++;
             if(this.loop_started){
                 if (this.count1 % 10 == 0) {
                     if (this.found_nothing_here) {
                         this.button2_message = "Huh, guess there is something here."
+                        this.loop_finished = true;
                         this.found_nothing_here = false;
+                        this.table1_show = true;
+                        this.interval_id = setInterval(jump_button, 1000);
                     }
                     else {
-
+                            this.button2_message = "Nope, nothing here."
+                            this.found_nothing_here = true;
                     }
                 }
                 else {
@@ -107,6 +130,20 @@ Vue.createApp({
             }
             else {
                 this.button2_message = complaints[this.count2];
+            }
+        },
+        click3(n){
+            this.count3++;
+            if (this.count3 >= 10) {
+                clearInterval(this.interval_id);
+                this.table1_showbuttons.fill(true);
+                this.table1_messages.fill("Guess!");
+                // TODO: Fill out guessing game.
+            }
+            else {
+                clearInterval(this.interval_id);
+                this.interval_id = setInterval(jump_button, Math.ceil(500/this.count3));
+                jump_button();
             }
         }
     }
