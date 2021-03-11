@@ -72,7 +72,7 @@ app = Vue.createApp({
                     }
                     else {
                         this.button1_message = complaints[(this.count1 % complaints.length)];
-                        if (this.count1 >= 30) {
+                        if (this.count1 >= 45) {
                             this.button2_show = true;
                             this.button2_message = "Okay, this is a loop now.";
                         }
