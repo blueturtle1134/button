@@ -57,7 +57,9 @@ app = Vue.createApp({
             table1_showbuttons: new Array(9).fill(false),
             table1_messages: new Array(9).fill("Click me!"),
             interval_id: null,
-            count3: 0
+            count3: 0,
+            currently_guessing: false,
+            correct_guess: null
         }
     },
     methods: {
@@ -95,12 +97,13 @@ app = Vue.createApp({
                 this.button2_show = true;
             }
         },
-        click2() {
+        click2(e) {
             this.count2++;
             if(this.loop_started){
                 if (this.count1 % 10 == 0) {
                     if (this.found_nothing_here) {
                         this.button2_message = "Huh, guess there is something here."
+                        e.target.blur();
                         this.loop_finished = true;
                         this.found_nothing_here = false;
                         this.table1_show = true;
@@ -108,15 +111,18 @@ app = Vue.createApp({
                     }
                     else {
                             this.button2_message = "Nope, nothing here."
+                            e.target.blur();
                             this.found_nothing_here = true;
                     }
                 }
                 else {
                     if (this.found_nothing_here) {
                         this.button2_message = "Still nothing here."
+                        e.target.blur();
                     }
                     else {
                         this.button2_message = "Nope, nothing here."
+                        e.target.blur();
                         this.found_nothing_here = true;
                     }
                 }
@@ -126,6 +132,7 @@ app = Vue.createApp({
             }
             else if (this.count2 >= complaints.length) {
                 this.button2_disguised = true;
+                e.target.blur();
                 this.button2_message = disguisedComplaints[this.count2 - complaints.length];
             }
             else {
@@ -133,14 +140,29 @@ app = Vue.createApp({
             }
         },
         click3(n){
-            this.count3++;
             if (this.count3 >= 10) {
                 clearInterval(this.interval_id);
-                this.table1_showbuttons.fill(true);
-                this.table1_messages.fill("Guess!");
-                // TODO: Fill out guessing game.
+                if (this.currently_guessing) {
+                    if (n == this.correct_guess) {
+                        this.count3++;
+                        this.correct_guess =  Math.trunc(Math.random()*9);
+                    }
+                    else {
+                        this.table1_showbuttons.fill(false);
+                        this.table1_showbuttons[this.correct_guess] = true;
+                        this.table1_messages.fill("Wrong!");
+                        this.currently_guessing = false;
+                    }
+                }
+                else {
+                    this.table1_showbuttons.fill(true);
+                    this.table1_messages.fill("Guess!");
+                    this.correct_guess =  Math.trunc(Math.random()*9);
+                    this.currently_guessing = true;
+                }
             }
             else {
+                this.count3++;
                 clearInterval(this.interval_id);
                 this.interval_id = setInterval(jump_button, Math.ceil(500/this.count3));
                 jump_button();

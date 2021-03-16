@@ -6,8 +6,8 @@
     </head>
     <body>
         <div id="app" style="text-align: center;">
-            <p><button v-if = "button1_show" @click="click1()" v-bind:title="count1 % 10">{{ button1_message }}</button></p>
-            <p><button v-if = "button2_show" @click="click2()" v-bind:class="{ disguised: button2_disguised }">{{ button2_message }}</button></p>
+            <p><button v-if = "button1_show" @click="click1" v-bind:title="count1 % 10">{{ button1_message }}</button></p>
+            <p><button v-if = "button2_show" @click="click2" v-bind:class="{ disguised: button2_disguised }">{{ button2_message }}</button></p>
             <table v-if = "table1_show" style="margin: auto;table-layout: fixed; width: 250px;">
                 <tr v-for="row in 3" style="height: 30px;">
                     <td v-for="cell in 3">
